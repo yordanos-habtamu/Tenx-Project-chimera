@@ -1,0 +1,63 @@
+[project]
+name = "project-chimera"
+version = "0.1.0"
+description = "Autonomous AI Influencer Infrastructure"
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+authors = [
+    {name = "Chimera Team", email = "team@chimera.ai"}
+]
+dependencies = [
+    "fastapi>=0.104.0",
+    "pydantic>=2.5.0",
+    "uvicorn>=0.24.0",
+    "httpx>=0.25.0",
+    "pytest>=7.4.0",
+    "pytest-asyncio>=0.21.0",
+    "docker>=6.1.0",
+    "psycopg2-binary>=2.9.0",
+    "sqlalchemy>=2.0.0",
+    "python-multipart>=0.0.6",
+    "tenacity>=8.2.0",
+    "mcp>=1.0.0",
+    "typing-extensions>=4.8.0",
+    "pydantic-settings>=2.1.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "black>=23.0.0",
+    "ruff>=0.1.0",
+    "mypy>=1.6.0",
+    "pre-commit>=3.5.0",
+    "pytest-cov>=4.1.0",
+]
+
+# Build system configuration
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+# Tool configurations
+[tool.black]
+line-length = 88
+target-version = ['py311']
+
+[tool.ruff]
+target-version = "py311"
+line-length = 88
+select = [
+    "E", "F", "W",  # Pyflakes errors
+    "I",  # isort
+    "B",  # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "UP",  # pyupgrade
+]
+ignore = ["E501", "B008"]
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
