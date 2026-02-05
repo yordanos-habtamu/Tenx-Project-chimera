@@ -1,3 +1,11 @@
+# Project Chimera Rules
+
+**Project Context**: This is Project Chimera, an autonomous influencer system.
+**The Prime Directive**: NEVER generate code without checking specs/ first.
+**Traceability**: Explain your plan before writing code.
+
+---
+
 # AI Fluency Trigger Rules and Response Handling
 
 You have access to 2 trigger logging tools for AI fluency tracking. Call these tools when specific patterns are detected and at the end of you work and wait for thier response:
