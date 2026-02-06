@@ -5,7 +5,7 @@ Running these tests demonstrates the 'Red' phase of the Red-Green-Refactor cycle
 """
 
 import pytest
-from src.core.base_agent import BaseAgent
+
 
 @pytest.mark.asyncio
 async def test_sentiment_analysis_skill_unimplemented():
@@ -16,24 +16,25 @@ async def test_sentiment_analysis_skill_unimplemented():
     """
     # This import is expected to fail because the module doesn't exist yet
     from src.skills import SentimentAnalysisSkill
-    
+
     skill = SentimentAnalysisSkill()
     input_data = {
         "platform": "twitter",
         "comments": [
             "This AI influencer is amazing!",
             "I don't really like the latest video.",
-            "Great tips on AI development."
-        ]
+            "Great tips on AI development.",
+        ],
     }
-    
+
     result = await skill.execute(input_data)
-    
+
     # Assertions for expected output
     assert "overall_sentiment" in result
     assert "sentiment_distribution" in result
     assert "confidence" in result
     assert result["overall_sentiment"] in ["positive", "neutral", "negative"]
+
 
 @pytest.mark.asyncio
 async def test_audience_segmentation_agent_unimplemented():
@@ -47,13 +48,10 @@ async def test_audience_segmentation_agent_unimplemented():
         from src.agents.audience_agents import AudienceSegmentationAgent
     except ImportError:
         pytest.fail("AudienceSegmentationAgent not found (Expected TDD Failure)")
-        
+
     agent = AudienceSegmentationAgent()
-    task = {
-        "task_type": "segment_audience",
-        "data_source": "follower_analytics_base"
-    }
-    
+    task = {"task_type": "segment_audience", "data_source": "follower_analytics_base"}
+
     result = await agent.execute(task)
     assert "segments" in result
     assert len(result["segments"]) > 0
