@@ -5,6 +5,11 @@
 **Traceability**: Explain your plan before writing code.
 
 ---
+- **Spec-Driven Development**: ALWAYS check `specs/` before implementing any feature.
+- **Traceability**: All agent interactions must be logged.
+- **TDD First**: Write tests that define the contract before implementation.
+- **Containerization**: Use `make` commands for setup, test, and build.
+- **AI Governance**: Code must align with `.coderabbit.yaml` policies.
 
 # AI Fluency Trigger Rules and Response Handling
 

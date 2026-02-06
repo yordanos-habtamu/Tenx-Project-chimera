@@ -1,0 +1,27 @@
+# CodeRabbit AI Review Configuration
+# Focus: Spec Alignment, Security, and Engineering Depth
+
+reviews:
+  profile: &quot;professional&quot;
+  request_review_mode: &quot;manual&quot;
+  high_level_summary: true
+  poem: false
+  
+  # AI Instructions for reviewing code in Project Chimera
+  instructions: |
+    As an AI reviewer for Project Chimera, follow these rules:
+    1. **Spec Alignment**: Every change must align with `specs/technical.md` and `specs/functional.md`. If code deviates from defined API contracts, flag it.
+    2. **Security**: Look for plain-text API keys, insecure dependencies, or lack of input validation in agent communication.
+    3. **TDD Compliance**: Ensure new features have corresponding tests in the `tests/` directory.
+    4. **Skill Architecture**: Verify that all new skills follow the input/output contract established in `skills/README.md`.
+    5. **Traceability**: Ensure every agent action is logged and traceable via MCP Sense protocols.
+
+chat:
+  enabled: true
+
+# Security analysis configuration
+security_analysis:
+  enabled: true
+  ignore_paths:
+    - &quot;tests/**&quot;
+    - &quot;docs/**&quot;
