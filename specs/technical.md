@@ -153,72 +153,40 @@
 
 ### Entity Relationship Diagram
 
-```
-agents
-├── agent_id (PK)
-├── agent_type
-├── swarm_assignment
-├── status
-├── last_heartbeat
-└── capabilities (JSON)
-
-tasks
-├── task_id (PK)
-├── agent_id (FK)
-├── task_type
-├── status
-├── priority
-├── created_at
-├── started_at
-├── completed_at
-└── payload (JSON)
-
-content
-├── content_id (PK)
-├── task_id (FK)
-├── content_type
-├── title
-├── body/script
-├── metadata (JSON)
-├── status
-├── created_at
-└── approved_at
-
-research_data
-├── research_id (PK)
-├── task_id (FK)
-├── topic
-├── findings (JSON)
-├── confidence_score
-├── created_at
-└── expires_at
-
-analytics
-├── analytic_id (PK)
-├── content_id (FK)
-├── platform
-├── metrics (JSON)
-├── collected_at
-└── engagement_rate
-
-compliance_records
-├── record_id (PK)
-├── content_id (FK)
-├── moderator_agent_id (FK)
-├── safety_score
-├── violations_found
-├── human_review_required
-├── approved
-└── reviewed_at
-
-platform_credentials
-├── credential_id (PK)
-├── platform_name
-├── user_identifier
-├── access_token (encrypted)
-├── refresh_token (encrypted)
-├── expires_at
-└── scopes (JSON)
+```mermaid
+erDiagram
+    AGENTS ||--o{ TASKS : manages
+    TASKS ||--o{ CONTENT : produces
+    TASKS ||--o{ RESEARCH_DATA : generates
+    CONTENT ||--o{ ANALYTICS : tracks
+    CONTENT ||--o{ COMPLIANCE_RECORDS : undergoes
+    AGENTS ||--o{ COMPLIANCE_RECORDS : reviews
+    AGENTS {
+        uuid agent_id PK
+        string agent_type
+        string swarm_assignment
+        string status
+        timestamp last_heartbeat
+        jsonb capabilities
+    }
+    TASKS {
+        uuid task_id PK
+        uuid agent_id FK
+        string task_type
+        string status
+        int priority
+        timestamp created_at
+        jsonb payload
+    }
+    CONTENT {
+        uuid content_id PK
+        uuid task_id FK
+        string content_type
+        string title
+        text body
+        jsonb metadata
+        string status
+    }
 ```
 
 ### Core Tables Schema
@@ -277,6 +245,31 @@ CREATE INDEX idx_tasks_agent_status ON tasks(agent_id, status);
 CREATE INDEX idx_content_status ON content(status);
 CREATE INDEX idx_tasks_created_at ON tasks(created_at);
 CREATE INDEX idx_content_created_at ON content(created_at);
+```
+
+## Execution Flow
+
+### Content Creation Lifecycle
+```mermaid
+sequenceDiagram
+    participant U as User/API
+    participant S as Supervisor
+    participant R as ResearchSwarm
+    participant C as ContentSwarm
+    participant L as SafetyLayer
+    participant D as DistributionSwarm
+
+    U->>S: POST /task (topic="AI")
+    S->>R: Delegate Research Task
+    R-->>S: Trend Data (Keywords, Vol)
+    S->>C: Delegate Generation Task
+    C-->>S: Script & Assets
+    S->>L: Delegate Validation Task
+    L->>L: Policy Check (Auto)
+    L-->>S: Validation Result (Approved)
+    S->>D: Delegate Distribution Task
+    D-->>S: Platform URLs
+    S-->>U: Final Workflow Result
 ```
 
 ## Agent Communication Protocol

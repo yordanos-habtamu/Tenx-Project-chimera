@@ -170,6 +170,23 @@ Sent for significant state changes:
 - **Batch Processing**: Periodic reporting of aggregated statistics
 
 ### Security Considerations
+```mermaid
+sequenceDiagram
+    participant C as Chimera Node
+    participant N as OpenClaw Network
+    participant D as Discovery Service
+
+    C->>N: Initial Handshake (ID + Cert)
+    N-->>C: Auth Token
+    loop Heartbeat (60s)
+        C->>N: presence_announcement (Status: Healthy)
+    end
+    C->>D: capability_advertisement (ContentGen, TrendAnalysis)
+    D-->>N: Update Global Index
+    N-->>C: Acknowledgement
+```
+
+### Security Considerations
 - **Identity Verification**: Certificate-based authentication with network authorities
 - **Message Integrity**: Digital signatures for all outbound communications
 - **Privacy Protection**: Anonymization of sensitive operational data
