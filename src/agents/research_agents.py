@@ -80,8 +80,8 @@ class TrendFetcherAgent(BaseAgent):
                 "related_terms": [f"{keyword} AI", f"top {keyword}"],
                 "platform_breakdown": {
                     "youtube": {"volume": random.randint(500, 5000), "engagement": 0.5},
-                    "twitter": {"volume": random.randint(500, 5000), "engagement": 0.6}
-                }
+                    "twitter": {"volume": random.randint(500, 5000), "engagement": 0.6},
+                },
             }
             trends.append(trend_data)
 
@@ -93,7 +93,7 @@ class TrendFetcherAgent(BaseAgent):
             "sources_used": self.trend_sources,
             "analysis_completed": True,
             "analysis_timestamp": datetime.utcnow().isoformat(),
-            "confidence_level": 0.95
+            "confidence_level": 0.95,
         }
 
 
