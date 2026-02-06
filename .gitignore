@@ -160,3 +160,8 @@ cython_debug/
 chimera.db
 logs/
 *.docx
+Project_Chimera_Report.md
+LOOM_VIDEO_GUIDE.md
+DAY_TWO_SUMMARY.md
+SRS_RESTRUCTURE_SUMMARY.md
+AGENT_RULES.md
