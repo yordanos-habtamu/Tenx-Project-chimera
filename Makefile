@@ -24,8 +24,7 @@ help: ## Show this help message
 
 setup: ## Install dependencies using uv
 	@echo "Installing dependencies..."
-	@curl -LsSf https://astral.sh/uv/install.sh | sh
-	@uv pip install .[dev]
+	@uv pip install --system .[dev]
 
 test: ## Run local tests
 	@echo "Running tests..."

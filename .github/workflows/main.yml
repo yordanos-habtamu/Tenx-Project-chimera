@@ -24,7 +24,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: uv pip install .[dev]
+        run: uv pip install --system .[dev]
 
       - name: Run Linting
         run: make lint
