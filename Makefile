@@ -29,7 +29,7 @@ setup: ## Install dependencies using uv
 
 test: ## Run local tests
 	@echo "Running tests..."
-	@$(PYTEST) tests/ -v
+	@uv run pytest tests/ -v
 
 build: ## Build Docker image
 	@echo "Building Docker image $(DOCKER_IMAGE)..."
@@ -41,17 +41,17 @@ test-docker: build ## Run tests inside Docker
 
 spec-check: ## Verify code alignment with specs
 	@echo "Running specification alignment check..."
-	@PYTHONPATH=. $(PYTHON) scripts/spec_checker.py
+	@uv run python scripts/spec_checker.py
 
 lint: ## Run linting checks
 	@echo "Running ruff check..."
-	@ruff check .
+	@uv run ruff check .
 	@echo "Running black check..."
-	@black --check .
+	@uv run black --check .
 
 run: ## Run the application
 	@echo "Starting application..."
-	@uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
+	@uv run uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
 
 clean: ## Remove build artifacts and caches
 	@echo "Cleaning up..."

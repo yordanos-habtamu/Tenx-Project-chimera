@@ -2,16 +2,16 @@
 API Routers for Project Chimera
 Defines the REST API endpoints for the autonomous influencer system
 """
-from fastapi import APIRouter, HTTPException, Depends, BackgroundTasks
-from typing import Dict, Any, List, Optional
-from datetime import datetime, timedelta
+
 import logging
+from datetime import datetime
+from typing import Any
+
+from fastapi import APIRouter, HTTPException
 
 from ..services.content_service import ContentService
-from ..services.research_service import ResearchService
 from ..services.publishing_service import PublishingService
-from ..database.models import Video
-from ..core.base_agent import AgentOrchestrator
+from ..services.research_service import ResearchService
 
 # Initialize services
 content_service = ContentService()
@@ -23,6 +23,7 @@ logger = logging.getLogger(__name__)
 
 # Create API routers
 router = APIRouter(prefix="/api/v1")
+
 
 # Health check endpoint
 @router.get("/health")
@@ -36,17 +37,14 @@ async def health_check():
         "services": {
             "content_service": "available",
             "research_service": "available",
-            "publishing_service": "available"
-        }
+            "publishing_service": "available",
+        },
     }
+
 
 # Research endpoints
 @router.post("/research/trends")
-async def analyze_trends(
-    keywords: List[str], 
-    timeframe: str = "7d", 
-    topic: str = ""
-):
+async def analyze_trends(keywords: list[str], timeframe: str = "7d", topic: str = ""):
     """
     Analyze trends for specified keywords or topic.
     """
@@ -56,11 +54,11 @@ async def analyze_trends(
         return result
     except Exception as e:
         logger.error(f"Trend analysis failed: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}") from e
 
 
 @router.post("/research/niches")
-async def analyze_niches(keywords: List[str], topic: str = ""):
+async def analyze_niches(keywords: list[str], topic: str = ""):
     """
     Analyze niches based on keywords and topic.
     """
@@ -70,14 +68,11 @@ async def analyze_niches(keywords: List[str], topic: str = ""):
         return result
     except Exception as e:
         logger.error(f"Niches analysis failed: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}") from e
 
 
 @router.post("/research/report")
-async def generate_research_report(
-    keywords: List[str], 
-    timeframe: str = "7d"
-):
+async def generate_research_report(keywords: list[str], timeframe: str = "7d"):
     """
     Generate a comprehensive research report combining trend and niche analysis.
     """
@@ -87,7 +82,9 @@ async def generate_research_report(
         return result
     except Exception as e:
         logger.error(f"Research report generation failed: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Report generation failed: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Report generation failed: {str(e)}"
+        ) from e
 
 
 @router.get("/research/history")
@@ -97,13 +94,12 @@ async def get_research_history():
     """
     try:
         history = research_service.get_analysis_history()
-        return {
-            "history": history,
-            "count": len(history)
-        }
+        return {"history": history, "count": len(history)}
     except Exception as e:
         logger.error(f"Failed to retrieve research history: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"History retrieval failed: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"History retrieval failed: {str(e)}"
+        ) from e
 
 
 @router.get("/research/stats")
@@ -116,14 +112,15 @@ async def get_research_stats():
         return stats
     except Exception as e:
         logger.error(f"Failed to retrieve research stats: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Stats retrieval failed: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Stats retrieval failed: {str(e)}"
+        ) from e
 
 
 # Content endpoints
 @router.post("/content/create")
 async def create_content_from_research(
-    research_data: Dict[str, Any], 
-    content_type: str = "educational"
+    research_data: dict[str, Any], content_type: str = "educational"
 ):
     """
     Create content based on research data following the complete workflow.
@@ -136,7 +133,9 @@ async def create_content_from_research(
         return result
     except Exception as e:
         logger.error(f"Content creation failed: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Content creation failed: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Content creation failed: {str(e)}"
+        ) from e
 
 
 @router.get("/content/history")
@@ -146,13 +145,12 @@ async def get_content_history():
     """
     try:
         history = content_service.get_workflow_history()
-        return {
-            "history": history,
-            "count": len(history)
-        }
+        return {"history": history, "count": len(history)}
     except Exception as e:
         logger.error(f"Failed to retrieve content history: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"History retrieval failed: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"History retrieval failed: {str(e)}"
+        ) from e
 
 
 @router.get("/content/stats")
@@ -165,15 +163,15 @@ async def get_content_stats():
         return stats
     except Exception as e:
         logger.error(f"Failed to retrieve content stats: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Stats retrieval failed: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Stats retrieval failed: {str(e)}"
+        ) from e
 
 
 # Publishing endpoints
 @router.post("/publish")
 async def publish_content(
-    content_data: Dict[str, Any], 
-    platforms: List[str],
-    schedule_immediate: bool = True
+    content_data: dict[str, Any], platforms: list[str], schedule_immediate: bool = True
 ):
     """
     Publish content to specified platforms.
@@ -182,18 +180,20 @@ async def publish_content(
         result = await publishing_service.publish_content(
             content_data, platforms, schedule_immediate
         )
-        logger.info(f"Publishing completed: {result.get('successful_publishes')} successes")
+        logger.info(
+            f"Publishing completed: {result.get('successful_publishes')} successes"
+        )
         return result
     except Exception as e:
         logger.error(f"Publishing failed: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Publishing failed: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Publishing failed: {str(e)}"
+        ) from e
 
 
 @router.post("/publish/schedule")
 async def schedule_publication(
-    content_data: Dict[str, Any], 
-    platforms: List[str], 
-    scheduled_datetime: str
+    content_data: dict[str, Any], platforms: list[str], scheduled_datetime: str
 ):
     """
     Schedule content publication for a future date/time.
@@ -201,8 +201,9 @@ async def schedule_publication(
     try:
         # Parse the scheduled datetime string
         from datetime import datetime
-        scheduled_dt = datetime.fromisoformat(scheduled_datetime.replace('Z', '+00:00'))
-        
+
+        scheduled_dt = datetime.fromisoformat(scheduled_datetime.replace("Z", "+00:00"))
+
         result = await publishing_service.schedule_publication(
             content_data, platforms, scheduled_dt
         )
@@ -210,14 +211,13 @@ async def schedule_publication(
         return result
     except Exception as e:
         logger.error(f"Scheduling failed: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Scheduling failed: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Scheduling failed: {str(e)}"
+        ) from e
 
 
 @router.post("/publish/bulk")
-async def bulk_publish(
-    content_list: List[Dict[str, Any]], 
-    platforms: List[str]
-):
+async def bulk_publish(content_list: list[dict[str, Any]], platforms: list[str]):
     """
     Publish multiple pieces of content to specified platforms.
     """
@@ -227,7 +227,9 @@ async def bulk_publish(
         return result
     except Exception as e:
         logger.error(f"Bulk publishing failed: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Bulk publishing failed: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Bulk publishing failed: {str(e)}"
+        ) from e
 
 
 @router.get("/publish/history")
@@ -237,13 +239,12 @@ async def get_publication_history():
     """
     try:
         history = publishing_service.get_publication_history()
-        return {
-            "history": history,
-            "count": len(history)
-        }
+        return {"history": history, "count": len(history)}
     except Exception as e:
         logger.error(f"Failed to retrieve publication history: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"History retrieval failed: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"History retrieval failed: {str(e)}"
+        ) from e
 
 
 @router.get("/publish/stats")
@@ -256,7 +257,9 @@ async def get_publishing_stats():
         return stats
     except Exception as e:
         logger.error(f"Failed to retrieve publishing stats: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Stats retrieval failed: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Stats retrieval failed: {str(e)}"
+        ) from e
 
 
 @router.get("/publish/platform-status/{platform}")
@@ -269,7 +272,9 @@ async def get_platform_status(platform: str):
         return result
     except Exception as e:
         logger.error(f"Failed to get platform status for {platform}: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Status check failed: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Status check failed: {str(e)}"
+        ) from e
 
 
 # Dashboard endpoints for monitoring
@@ -283,7 +288,7 @@ async def get_dashboard_overview():
         research_stats = research_service.get_research_statistics()
         content_stats = content_service.get_content_statistics()
         publishing_stats = publishing_service.get_publishing_statistics()
-        
+
         overview = {
             "timestamp": datetime.utcnow().isoformat(),
             "research": research_stats,
@@ -292,16 +297,30 @@ async def get_dashboard_overview():
             "system_uptime_hours": 24,  # Placeholder
             "active_agents": 0,  # Would come from orchestrator in real implementation
             "recent_activity": {
-                "latest_research": research_stats.get("latest_analysis", {}).get("timestamp") if research_stats.get("latest_analysis") else None,
-                "latest_content": content_stats.get("latest_workflow", {}).get("created_at") if content_stats.get("latest_workflow") else None,
-                "latest_publishing": publishing_stats.get("latest_publication", {}).get("timestamp") if publishing_stats.get("latest_publication") else None
-            }
+                "latest_research": (
+                    research_stats.get("latest_analysis", {}).get("timestamp")
+                    if research_stats.get("latest_analysis")
+                    else None
+                ),
+                "latest_content": (
+                    content_stats.get("latest_workflow", {}).get("created_at")
+                    if content_stats.get("latest_workflow")
+                    else None
+                ),
+                "latest_publishing": (
+                    publishing_stats.get("latest_publication", {}).get("timestamp")
+                    if publishing_stats.get("latest_publication")
+                    else None
+                ),
+            },
         }
-        
+
         return overview
     except Exception as e:
         logger.error(f"Failed to get dashboard overview: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Dashboard overview failed: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Dashboard overview failed: {str(e)}"
+        ) from e
 
 
 # Agent management endpoints (for orchestrator)
@@ -318,8 +337,10 @@ async def get_agent_status():
             "total_agents": 0,
             "active_agents": 0,
             "status": "standalone_mode",
-            "message": "Agent orchestration service not yet connected to orchestrator"
+            "message": "Agent orchestration service not yet connected to orchestrator",
         }
     except Exception as e:
         logger.error(f"Failed to get agent status: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Agent status check failed: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Agent status check failed: {str(e)}"
+        ) from e

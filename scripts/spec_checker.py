@@ -1,7 +1,7 @@
 import os
-import re
 import sys
 from pathlib import Path
+
 
 def check_file_exists(path):
     if not os.path.exists(path):
@@ -10,6 +10,7 @@ def check_file_exists(path):
     print(f"PASSED: File {path} exists")
     return True
 
+
 def check_directory_exists(path):
     if not os.path.isdir(path):
         print(f"FAILED: Directory {path} not found")
@@ -17,33 +18,37 @@ def check_directory_exists(path):
     print(f"PASSED: Directory {path} exists")
     return True
 
+
 def run_checks():
     print("--- Project Chimera Specification Alignment Check ---")
-    
+
     # Required Project Structure
     required_dirs = ["specs", "src", "tests", "skills", "research", ".github/workflows"]
     required_files = [
-        "Dockerfile", 
-        "Makefile", 
+        "Dockerfile",
+        "Makefile",
         "pyproject.toml",
         "specs/_meta.md",
         "specs/technical.md",
         "specs/functional.md",
-        "AGENT_RULES.md"
+        "AGENT_RULES.md",
     ]
-    
+
     all_passed = True
-    
+
     print("\nVerifying Project Structure:")
     for d in required_dirs:
-        if not check_directory_exists(d): all_passed = False
+        if not check_directory_exists(d):
+            all_passed = False
     for f in required_files:
-        if not check_file_exists(f): all_passed = False
-        
+        if not check_file_exists(f):
+            all_passed = False
+
     # Check if models match tech spec
     print("\nVerifying Database Models Alignment:")
     try:
-        from src.database.models import Base
+        from src.database.models import Base  # noqa: F401
+
         print("PASSED: Database models are importable")
     except ImportError as e:
         print(f"FAILED: Database models could not be imported: {e}")
@@ -61,7 +66,7 @@ def run_checks():
                 else:
                     print(f"FAILED: Skill '{skill_path.name}' is missing README.md")
                     all_passed = False
-    
+
     print("\n--- Summary ---")
     if all_passed:
         print("All specification alignment checks PASSED.")
@@ -69,6 +74,7 @@ def run_checks():
     else:
         print("Some specification alignment checks FAILED.")
         return 1
+
 
 if __name__ == "__main__":
     sys.exit(run_checks())
